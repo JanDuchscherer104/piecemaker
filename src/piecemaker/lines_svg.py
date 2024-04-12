@@ -1,9 +1,10 @@
 import os
+from pathlib import Path
 
 from PIL import Image
 
 from piecemaker.base import JigsawPieceClipsSVG
-from piecemaker.tools import gridify, cap_dimensions
+from piecemaker.tools import cap_dimensions, gridify
 
 
 def create_lines_svg(
@@ -15,9 +16,9 @@ def create_lines_svg(
     number_of_pieces,
     imagefile,
     variant,
+    svg_file: Path,
 ):
     # create a grid of puzzle pieces in svg
-
     _minimum_piece_size = max(
         minimum_piece_size
         + (abs((width % minimum_piece_size) / minimum_piece_size - 1)),
@@ -36,7 +37,7 @@ def create_lines_svg(
         _minimum_piece_size
         + (abs((height % _minimum_piece_size) / _minimum_piece_size - 1)),
     )
-    print(f"minimum_piece_size {_minimum_piece_size}")
+    # print(f"minimum_piece_size {_minimum_piece_size}")
     (rows, cols, piece_width, piece_height) = gridify(
         width, height, number_of_pieces, _minimum_piece_size
     )
@@ -61,9 +62,7 @@ def create_lines_svg(
         variant=variant,
     )
 
-    svgfile = os.path.join(output_dir, "lines.svg")
-    f = open(svgfile, "w")
-    f.write(jpc.svg())
-    f.close()
+    with svg_file.open("w") as f:
+        f.write(jpc.svg())
 
-    return (_imagefile, jpc)
+    return (_imagefile, jpc, rows, cols)

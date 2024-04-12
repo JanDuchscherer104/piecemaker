@@ -1,35 +1,28 @@
-from __future__ import absolute_import
-from __future__ import division
-from builtins import str
-from builtins import range
-from builtins import object
-import os
-from glob import iglob
+from __future__ import absolute_import, division
+
 import json
+import os
 import subprocess
+from builtins import object, range, str
+from glob import iglob
 
 import svgwrite
-from PIL import Image
 from bs4 import BeautifulSoup
+from piecemaker.cut_proof import generate_cut_proof_html
+from piecemaker.sprite import (
+    generate_data_uris,
+    generate_sprite_svg_clip_paths,
+    generate_sprite_svg_fragments,
+    generate_sprite_with_padding_layout,
+    generate_sprite_without_padding_layout,
+)
+from piecemaker.sprite_raster_proof import generate_sprite_raster_proof_html
+from piecemaker.sprite_vector_proof import generate_sprite_vector_proof_html
+from piecemaker.tools import cap_dimensions, gridify, potrace, rasterize_svgfile
+from PIL import Image
 from pixsaw.base import Handler
 
 from .paths import interlockingnubs, stochasticnubs
-from piecemaker.tools import (
-    rasterize_svgfile,
-    potrace,
-    cap_dimensions,
-    gridify,
-)
-from piecemaker.sprite import (
-    generate_data_uris,
-    generate_sprite_without_padding_layout,
-    generate_sprite_with_padding_layout,
-    generate_sprite_svg_clip_paths,
-    generate_sprite_svg_fragments,
-)
-from piecemaker.cut_proof import generate_cut_proof_html
-from piecemaker.sprite_raster_proof import generate_sprite_raster_proof_html
-from piecemaker.sprite_vector_proof import generate_sprite_vector_proof_html
 
 variants = {
     interlockingnubs.__name__.replace("piecemaker.paths.", ""),
@@ -115,8 +108,8 @@ class Pieces(object):
         for piece in iglob(os.path.join(self._raster_dir, "*.png")):
             subprocess.run(["optipng", "-clobber", "-quiet", piece], check=True)
 
-        for piece in iglob(os.path.join(self._mask_dir, "*.bmp")):
-            potrace(piece, self._vector_dir)
+        # for piece in iglob(os.path.join(self._mask_dir, "*.bmp")):
+        #     potrace(piece, self._vector_dir)
 
         with open(os.path.join(self.mydir, "pieces.json"), "r") as pieces_json:
             self.pieces = json.load(pieces_json)
@@ -128,47 +121,47 @@ class Pieces(object):
             output_dir=self.mydir,
         )
 
-        sprite_without_padding_layout = generate_sprite_without_padding_layout(
-            raster_dir=os.path.join(self.mydir, "raster"),
-            output_dir=self.mydir,
-        )
+        # sprite_without_padding_layout = generate_sprite_without_padding_layout(
+        #     raster_dir=os.path.join(self.mydir, "raster"),
+        #     output_dir=self.mydir,
+        # )
         sprite_with_padding_layout = generate_sprite_with_padding_layout(
             raster_dir=os.path.join(self.mydir, "raster_with_padding"),
             output_dir=self.mydir,
         )
-        jpg_sprite_file_name = os.path.join(self.mydir, "sprite_with_padding.jpg")
+        # jpg_sprite_file_name = os.path.join(self.mydir, "sprite_with_padding.jpg")
 
-        generate_sprite_svg_clip_paths(
-            output_dir=self.mydir,
-            scale=self.scale,
-            pieces_json_file=os.path.join(self.mydir, "pieces.json"),
-            vector_dir=self._vector_dir,
-        )
-        generate_sprite_svg_fragments(
-            sprite_layout=sprite_with_padding_layout,
-            jpg_sprite_file_name=jpg_sprite_file_name,
-            scaled_image=self._scaled_image,
-            output_dir=self.mydir,
-            scale=self.scale,
-        )
+        # generate_sprite_svg_clip_paths(
+        #     output_dir=self.mydir,
+        #     scale=self.scale,
+        #     pieces_json_file=os.path.join(self.mydir, "pieces.json"),
+        #     vector_dir=self._vector_dir,
+        # )
+        # generate_sprite_svg_fragments(
+        #     sprite_layout=sprite_with_padding_layout,
+        #     jpg_sprite_file_name=jpg_sprite_file_name,
+        #     scaled_image=self._scaled_image,
+        #     output_dir=self.mydir,
+        #     scale=self.scale,
+        # )
 
-        generate_sprite_raster_proof_html(
-            pieces_json_file=os.path.join(self.mydir, "pieces.json"),
-            output_dir=self.mydir,
-            sprite_layout=sprite_without_padding_layout,
-            scale=self.scale,
-        )
-        generate_sprite_vector_proof_html(
-            mydir=self.mydir,
-            output_dir=self.mydir,
-            sprite_layout=sprite_with_padding_layout,
-            scale=self.scale,
-        )
-        generate_cut_proof_html(
-            pieces_json_file=os.path.join(self.mydir, "pieces.json"),
-            output_dir=self.mydir,
-            scale=self.scale,
-        )
+        # generate_sprite_raster_proof_html(
+        #     pieces_json_file=os.path.join(self.mydir, "pieces.json"),
+        #     output_dir=self.mydir,
+        #     sprite_layout=sprite_without_padding_layout,
+        #     scale=self.scale,
+        # )
+        # generate_sprite_vector_proof_html(
+        #     mydir=self.mydir,
+        #     output_dir=self.mydir,
+        #     sprite_layout=sprite_with_padding_layout,
+        #     scale=self.scale,
+        # )
+        # generate_cut_proof_html(
+        #     pieces_json_file=os.path.join(self.mydir, "pieces.json"),
+        #     output_dir=self.mydir,
+        #     scale=self.scale,
+        # )
 
 
 class JigsawPieceClipsSVG(object):
@@ -205,8 +198,8 @@ class JigsawPieceClipsSVG(object):
             max_pieces_that_will_fit = max(
                 2, int((width / minimum_piece_size) * (height / minimum_piece_size))
             )
-            print(f"max pieces that will fit {max_pieces_that_will_fit}")
-            print(f"pieces requested {self.pieces}")
+            # print(f"max pieces that will fit {max_pieces_that_will_fit}")
+            # print(f"pieces requested {self.pieces}")
 
             if self.pieces > 0:
                 # Only use the piece count that is smaller to avoid getting too
@@ -215,7 +208,7 @@ class JigsawPieceClipsSVG(object):
             else:
                 self.pieces = max_pieces_that_will_fit
 
-        print(f"pieces adjusted {self.pieces}")
+        # print(f"pieces adjusted {self.pieces}")
 
         (self._rows, self._cols, self._piece_width, self._piece_height) = gridify(
             width, height, self.pieces, self.minimum_piece_size
@@ -226,8 +219,8 @@ class JigsawPieceClipsSVG(object):
         # set piece dimensions
         # self._piece_width = float(width) / float(self._cols)
         # self._piece_height = float(height) / float(self._rows)
-        print(f"pieces actual {self.pieces}")
-        print(f"piece size {self._piece_width} x {self._piece_height}")
+        # print(f"pieces actual {self.pieces}")
+        # print(f"piece size {self._piece_width} x {self._piece_height}")
 
         description = f"Created with the piecemaker. Piece count: {self.pieces}"
         # create a drawing

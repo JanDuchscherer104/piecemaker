@@ -1,8 +1,8 @@
-import re
-import os
-import sys
 import copy
 import hashlib
+import os
+import re
+import sys
 
 try:
     from StringIO import StringIO
@@ -10,7 +10,7 @@ except ImportError:
     from io import BytesIO as StringIO
 
 try:
-    from ConfigParser import RawConfigParser, NoSectionError
+    from ConfigParser import NoSectionError, RawConfigParser
 except ImportError:
     from configparser import RawConfigParser, NoSectionError
 
@@ -18,9 +18,9 @@ from PIL import Image as PILImage
 
 from piecemaker.glue.algorithms import algorithms
 from piecemaker.glue.compat import iteritems
-from piecemaker.glue.helpers import cached_property, round_up
+from piecemaker.glue.exceptions import PILUnavailableError, SourceImagesNotFoundError
 from piecemaker.glue.formats import ImageFormat
-from piecemaker.glue.exceptions import SourceImagesNotFoundError, PILUnavailableError
+from piecemaker.glue.helpers import cached_property, round_up
 
 
 class ConfigurableFromFile(object):
@@ -206,7 +206,7 @@ class Sprite(ConfigurableFromFile):
             if ratio_output_key not in self.config:
                 self.config[ratio_output_key] = img_format.output_path(ratio)
 
-        print("Processing '{0}':".format(self.name))
+        # print("Processing '{0}':".format(self.name))
 
         # Generate sprite map
         self.process()

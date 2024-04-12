@@ -1,17 +1,17 @@
-import os
 import json
-from optparse import OptionParser
+import os
 from math import ceil, sqrt
+from optparse import OptionParser
 
 from PIL import Image
 
-from piecemaker.base import Pieces, variants
+from piecemaker._version import __version__
 from piecemaker.adjacent import Adjacent
+from piecemaker.base import Pieces, variants
 from piecemaker.distribution import random_outside
 from piecemaker.lines_svg import create_lines_svg
 from piecemaker.reduce import reduce_size
 from piecemaker.table_proof import generate_table_proof_html
-from piecemaker._version import __version__
 
 
 def piecemaker():
@@ -139,7 +139,8 @@ Example: 33,68,100,150 for 4 scaled puzzles with the last one being at 150%.""",
         if minimum_piece_size < 0:
             parser.error("Invalid minimum piece size")
         if minimum_piece_size < 25:
-            print("Warning: a minimum piece size less than 25 is not recommended.")
+            pass
+            # print("Warning: a minimum piece size less than 25 is not recommended.")
 
         if options.number_of_pieces < 0:
             parser.error("Invalid number of pieces")
@@ -151,7 +152,6 @@ Must set minimum piece size greater than 0
 or set number of pieces greater than 0.
                 """
             )
-
 
         (imagefile, jpc) = create_lines_svg(
             output_dir=mydir,
@@ -239,7 +239,7 @@ or set number of pieces greater than 0.
         piece_bboxes=piece_bboxes,
         regions=("left_side", "top_middle", "bottom_middle"),
     )
-    for (i, bbox) in piece_bboxes.items():
+    for i, bbox in piece_bboxes.items():
         # TODO: set rotation of pieces
         # TODO: implement multiple sided pieces
         # TODO: set grouping ids to pieces.
